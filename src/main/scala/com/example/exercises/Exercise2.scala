@@ -1,5 +1,8 @@
 package com.example.exercises
 
+import cats.syntax.all._
+import cats.effect.IO
+
 object Exercise2 {
 
 
@@ -11,10 +14,11 @@ object Exercise2 {
    * the 10 calls run in parallel.
    **/
 
-  
+
   /** Exercise 2:
    * Using the implementation of the program from the previous exercise, implement some logic that picks one of the calls and cancels it
    * or creates a failed IO (hint: user either IO.canceled or IO.raiseError(..), and observe that the when the failure happens, all the other IOs
    * within the same context are canceled (hint: use .onCancel(..) to print out a message that shows that each of the other IOs has been canceled)
    **/
+
 }
