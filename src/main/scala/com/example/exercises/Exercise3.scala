@@ -2,6 +2,13 @@ package com.example.exercises
 
 import cats.effect._
 
+import java.io.BufferedReader
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
+import scala.concurrent.duration._
+import scala.jdk.CollectionConverters._
+import scala.language._
+
 object Exercise3 extends IOApp.Simple {
 
   /**
@@ -16,12 +23,18 @@ object Exercise3 extends IOApp.Simple {
    * Hint: use the skeleton of the implementation below as a starting point
    */
 
+  private def readFile(path: String): Resource[IO, BufferedReader] =
+    Resource.fromAutoCloseable(IO.blocking {
+            Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)
+          })
+          .onFinalize { IO.println("Stopped " + path + "!") }
+
   override def run: IO[Unit] = (for {
-        fileContent1 <- readFile("file1")
-        filecontent2 <- readFile("file2")
-      } yield (fileContent1, filecontent2)
+        fileContent1 <- readFile("./src/main/scala/com/example/Cancelling.scala")
+        fileContent2 <- readFile("./src/main/scala/com/example/Combinators.scala")
+      } yield (fileContent1, fileContent2)
     ).use { case (f1, f2) =>
-      IO.println("" + /* print the combined contents*/ "") *>
-        IO.unit // change this IO.unit with what you need to print the "." every 1 second
+      IO.println(f1.lines().toList.asScala.mkString("\n") ++ f2.lines().toList.asScala.mkString("\n")) *>
+        (IO.print(".") >> IO.sleep(1 second)).foreverM
   }
 }
